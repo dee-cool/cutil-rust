@@ -1,0 +1,6 @@
+/.idea
+**/target
+/.env
+/bucket
+.vscode
+/.cursorrules
