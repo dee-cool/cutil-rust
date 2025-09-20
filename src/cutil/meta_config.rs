@@ -20,7 +20,7 @@ impl axum::response::IntoResponse for Meta {
     let status_code = match self.name.as_str() {
       "unauthorized" => http::StatusCode::UNAUTHORIZED,
       _ => http::StatusCode::INTERNAL_SERVER_ERROR,
-    }; 
+    };
     let text = to_string(&self).unwrap_or_default();
     (status_code, text).into_response()
   }

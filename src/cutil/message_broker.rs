@@ -2,13 +2,13 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use async_trait::async_trait;
-use rumqttc::v5::mqttbytes::v5::Packet;
-use rumqttc::v5::mqttbytes::QoS;
-use rumqttc::v5::{AsyncClient, Event, EventLoop, MqttOptions};
 use rumqttc::Outgoing;
 use rumqttc::Transport;
+use rumqttc::v5::mqttbytes::QoS;
+use rumqttc::v5::mqttbytes::v5::Packet;
+use rumqttc::v5::{AsyncClient, Event, EventLoop, MqttOptions};
 use serde::{Deserialize, Serialize};
-use tokio::sync::{watch, Mutex};
+use tokio::sync::{Mutex, watch};
 use tokio::time::sleep;
 use tracing::{error, info};
 use utoipa::ToSchema;

@@ -1,13 +1,13 @@
-use time::macros::format_description;
 use time::UtcOffset;
+use time::macros::format_description;
 use tracing_appender::non_blocking::WorkerGuard;
 use tracing_appender::{non_blocking, rolling};
 use tracing_error::ErrorLayer;
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::fmt::time::OffsetTime;
 use tracing_subscriber::util::SubscriberInitExt;
-use tracing_subscriber::{fmt, layer::SubscriberExt, prelude::*};
 use tracing_subscriber::{Layer, Registry};
+use tracing_subscriber::{fmt, layer::SubscriberExt, prelude::*};
 
 static mut _WORKER_GUARD: Option<WorkerGuard> = None;
 

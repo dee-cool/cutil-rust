@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use uuid::Uuid;
 
 pub trait Extract {
   fn extract_i64(&self, key: &str) -> Option<i64>;
@@ -9,6 +10,7 @@ pub trait Extract {
   fn extract_f64(&self, key: &str) -> Option<f64>;
   fn extract_bool(&self, key: &str) -> Option<bool>;
   fn extract_string(&self, key: &str) -> Option<String>;
+  fn extract_uuid(&self, key: &str) -> Option<Uuid>;
 
   fn extract_i64_default(&self, key: &str, default: i64) -> i64;
   fn extract_u64_default(&self, key: &str, default: u64) -> u64;
@@ -18,6 +20,7 @@ pub trait Extract {
   fn extract_f64_default(&self, key: &str, default: f64) -> f64;
   fn extract_bool_default(&self, key: &str, default: bool) -> bool;
   fn extract_string_default(&self, key: &str, default: &str) -> String;
+  fn extract_uuid_default(&self, key: &str, default: Uuid) -> Uuid;
 
   fn extract_vec(&self, key: &str) -> Vec<String>;
 }
@@ -54,6 +57,10 @@ impl Extract for HashMap<String, String> {
   fn extract_string(&self, key: &str) -> Option<String> {
     self.get(key).map(|s| s.to_string())
   }
+  
+  fn extract_uuid(&self, key: &str) -> Option<Uuid> {
+    self.get(key).map(|s| Uuid::parse_str(s).unwrap_or_default())
+  }
 
   fn extract_i64_default(&self, key: &str, default: i64) -> i64 {
     self.get(key).unwrap_or(&default.to_string()).parse().unwrap_or_default()
@@ -85,6 +92,10 @@ impl Extract for HashMap<String, String> {
 
   fn extract_string_default(&self, key: &str, default: &str) -> String {
     self.get(key).unwrap_or(&default.to_string()).to_string()
+  }
+  
+  fn extract_uuid_default(&self, key: &str, default: Uuid) -> Uuid {
+    self.get(key).map(|s| Uuid::parse_str(s).unwrap_or_default()).unwrap_or(default)
   }
 
   fn extract_vec(&self, key: &str) -> Vec<String> {

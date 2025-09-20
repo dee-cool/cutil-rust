@@ -2239,7 +2239,7 @@ dependencies = [
 
 [[package]]
 name = "rust-cutil"
-version = "1.0.25092001"
+version = "1.0.25092002"
 dependencies = [
  "actify",
  "actix",
