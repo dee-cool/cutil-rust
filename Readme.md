@@ -1,4 +1,4 @@
-# rust-cutil
+# cutil-rust
 
 Rust 通用工具库，提供数据库操作、消息队列、日志、工具函数等常用功能。
 
@@ -51,14 +51,14 @@ Rust 通用工具库，提供数据库操作、消息队列、日志、工具函
 
 ```toml
 [dependencies]
-rust-cutil = "1.0.25092002"
+cutil-rust = "1.0.25092002"
 ```
 
 ### 数据库操作示例
 
 ```rust
-use rust_cutil::cutil::db_client::DbClient;
-use rust_cutil::cutil::db_crud::*;
+use cutil_rust::cutil::db_client::DbClient;
+use cutil_rust::cutil::db_crud::*;
 use sea_orm::{ConnectOptions, Database};
 
 // 创建数据库客户端
@@ -77,7 +77,7 @@ let user = repo.get(user_id).await?;
 ### 消息队列示例
 
 ```rust
-use rust_cutil::cutil::message_broker::{MessageBrokerImpl, MessageBrokerOptions, Qos};
+use cutil_rust::cutil::message_broker::{MessageBrokerImpl, MessageBrokerOptions, Qos};
 
 let options = MessageBrokerOptions {
     host: "localhost".to_string(),
@@ -94,7 +94,7 @@ broker.subscribe(vec!["topic/1".to_string()], Qos::AtLeastOnce).await?;
 ### 日志配置示例
 
 ```rust
-use rust_cutil::cutil::log;
+use cutil_rust::cutil::log;
 use tracing_subscriber::filter::LevelFilter;
 
 log::configure(
@@ -149,8 +149,4 @@ log::configure(
 ## 许可证
 
 MIT License
-
-## 仓库
-
-https://github.com/zhrren/rust-cutil
 

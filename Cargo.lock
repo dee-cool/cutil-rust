@@ -598,6 +598,56 @@ dependencies = [
 ]
 
 [[package]]
+name = "cutil-rust"
+version = "1.0.25092002"
+dependencies = [
+ "actify",
+ "actix",
+ "anyhow",
+ "async-trait",
+ "axum",
+ "axum-extra",
+ "bytes",
+ "chrono",
+ "derivative",
+ "dotenv",
+ "futures",
+ "futures-util",
+ "headers",
+ "http",
+ "idgenerator-thin",
+ "itertools 0.13.0",
+ "more-di",
+ "once_cell",
+ "rand 0.9.1",
+ "regex",
+ "reqwest",
+ "rumqttc",
+ "rust_decimal",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "serde_repr",
+ "statum",
+ "struct-convert",
+ "structopt",
+ "time",
+ "tokio",
+ "tokio-stream",
+ "tokio-tungstenite",
+ "tower-http",
+ "tracing",
+ "tracing-appender",
+ "tracing-error",
+ "tracing-subscriber",
+ "ulid",
+ "url",
+ "utoipa",
+ "utoipauto",
+ "uuid",
+]
+
+[[package]]
 name = "darling"
 version = "0.14.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2235,56 +2285,6 @@ dependencies = [
  "thiserror 1.0.69",
  "tokio",
  "tokio-rustls 0.25.0",
-]
-
-[[package]]
-name = "rust-cutil"
-version = "1.0.25092002"
-dependencies = [
- "actify",
- "actix",
- "anyhow",
- "async-trait",
- "axum",
- "axum-extra",
- "bytes",
- "chrono",
- "derivative",
- "dotenv",
- "futures",
- "futures-util",
- "headers",
- "http",
- "idgenerator-thin",
- "itertools 0.13.0",
- "more-di",
- "once_cell",
- "rand 0.9.1",
- "regex",
- "reqwest",
- "rumqttc",
- "rust_decimal",
- "sea-orm",
- "serde",
- "serde_json",
- "serde_repr",
- "statum",
- "struct-convert",
- "structopt",
- "time",
- "tokio",
- "tokio-stream",
- "tokio-tungstenite",
- "tower-http",
- "tracing",
- "tracing-appender",
- "tracing-error",
- "tracing-subscriber",
- "ulid",
- "url",
- "utoipa",
- "utoipauto",
- "uuid",
 ]
 
 [[package]]
