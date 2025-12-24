@@ -53,9 +53,10 @@ impl Pos {
     }
   }
 
-  pub async fn paged<E, D>(&self, conn: &DatabaseConnection, mut query: Select<E>) -> R<Paged<D>>
+  pub async fn paged<M, E, D>(&self, conn: &DatabaseConnection, mut query: Select<E>) -> R<Paged<D>>
   where
-    E: EntityTrait,
+    M: FromQueryResult + Send + Sync,
+    E: EntityTrait<Model = M>,
     D: FromQueryResult + Send + Sync,
   {
     for item in &self.order_by {
