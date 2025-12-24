@@ -15,14 +15,17 @@ pub struct Pos {
   pub order_by: Vec<String>,
 }
 
-impl Pos {
-  pub fn default() -> Self {
+impl Default for Pos {
+  fn default() -> Self {
     Pos {
       page_index: 0,
       page_size: 10,
       order_by: vec![],
     }
   }
+}
+
+impl Pos {
   pub fn first() -> Self {
     Pos {
       page_index: 0,
@@ -50,9 +53,8 @@ impl Pos {
     }
   }
 
-  pub async fn paged<M, E, D>(&self, conn: &DatabaseConnection, mut query: Select<E>) -> R<Paged<D>>
+  pub async fn paged<E, D>(&self, conn: &DatabaseConnection, mut query: Select<E>) -> R<Paged<D>>
   where
-    M: FromQueryResult + Send + Sync,
     E: EntityTrait,
     D: FromQueryResult + Send + Sync,
   {

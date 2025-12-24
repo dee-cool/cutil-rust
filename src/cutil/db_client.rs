@@ -50,7 +50,10 @@ impl DbClient {
 
   /// 创建新的数据库连接
   async fn create_connection(&self) -> R<Arc<DatabaseConnection>> {
-    let options = self.options.get().unwrap();
+    let options = self.options.get().ok_or_else(|| -> Meta {
+      error!("Database options not configured");
+      meta!("db_options_not_configured", "Database connection options not configured")
+    })?;
 
     match Database::connect(options.clone()).await {
       Ok(conn) => {

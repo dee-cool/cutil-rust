@@ -1,3 +1,4 @@
+use once_cell::sync::OnceCell;
 use time::UtcOffset;
 use time::macros::format_description;
 use tracing_appender::non_blocking::WorkerGuard;
@@ -7,9 +8,9 @@ use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::fmt::time::OffsetTime;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{Layer, Registry};
-use tracing_subscriber::{fmt, layer::SubscriberExt, prelude::*};
+use tracing_subscriber::{fmt, layer::SubscriberExt};
 
-static mut _WORKER_GUARD: Option<WorkerGuard> = None;
+static WORKER_GUARD: OnceCell<WorkerGuard> = OnceCell::new();
 
 pub fn configure(level: LevelFilter, bucket_path: String, app_name: String) {
   let local_time = OffsetTime::new(
@@ -23,10 +24,9 @@ pub fn configure(level: LevelFilter, bucket_path: String, app_name: String) {
     .with_filter(level);
 
   let file_appender = rolling::daily(format!("{}/log/", bucket_path), format!("{}.log", app_name));
-  let (non_blocking_appender, _guard) = non_blocking(file_appender);
-  unsafe {
-    _WORKER_GUARD = Some(_guard);
-  }
+  let (non_blocking_appender, guard) = non_blocking(file_appender);
+  
+  WORKER_GUARD.set(guard).expect("日志系统只能初始化一次");
 
   let file_layer = fmt::layer()
     .with_timer(local_time.clone())

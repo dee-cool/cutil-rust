@@ -19,7 +19,7 @@ pub fn mask_string(text: String) -> String {
     if i < front_len || i >= length - back_len {
       result.push(ch);
     } else if i == front_len {
-      result.extend(std::iter::repeat('*').take(middle_len));
+      result.extend(std::iter::repeat_n('*', middle_len));
     }
   }
 

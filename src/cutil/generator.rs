@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use idgenerator_thin::{IdGeneratorOptions, YitIdHelper};
 use once_cell::sync::Lazy;
 use rand::distr::Alphanumeric;
-use rand::{Rng, thread_rng};
+use rand::Rng;
 use ulid::Ulid;
 use uuid::Uuid;
 
@@ -47,7 +47,7 @@ pub async fn gen_id() -> R<i64> {
 }
 
 pub fn gen_string(length: usize) -> String {
-  let rand_string: String = thread_rng().sample_iter(&Alphanumeric).take(length).map(char::from).collect();
+  let rand_string: String = rand::rng().sample_iter(&Alphanumeric).take(length).map(char::from).collect();
   rand_string
 }
 

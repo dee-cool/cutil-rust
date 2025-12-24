@@ -7,7 +7,7 @@ use utoipa::ToSchema;
 #[macro_export]
 macro_rules! meta {
   ($name: expr) => {
-    Meta {
+    $crate::cutil::meta::Meta {
       name: $name.to_string(),
       message: "".to_string(),
       data: None,
@@ -15,7 +15,7 @@ macro_rules! meta {
     .into()
   };
   ($name: expr, $message: expr) => {
-    Meta {
+    $crate::cutil::meta::Meta {
       name: $name.to_string(),
       message: $message.to_string(),
       data: None,
@@ -23,7 +23,7 @@ macro_rules! meta {
     .into()
   };
   ($name: expr, $message: expr, $data: expr) => {
-    Meta {
+    $crate::cutil::meta::Meta {
       name: $name.to_string(),
       message: $message.to_string(),
       data: Some($data),

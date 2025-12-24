@@ -9,9 +9,9 @@ use serde_json::to_string;
 
 use crate::cutil::meta::Meta;
 
-impl<T> Into<Result<T, Meta>> for Meta {
-  fn into(self) -> Result<T, Meta> {
-    Err(self)
+impl<T> From<Meta> for Result<T, Meta> {
+  fn from(meta: Meta) -> Self {
+    Err(meta)
   }
 }
 

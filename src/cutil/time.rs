@@ -9,9 +9,9 @@ pub fn now_string() -> String {
 }
 
 pub fn now_millis() -> i64 {
-  return Local::now().timestamp_millis();
+  Local::now().timestamp_millis()
 }
 
 pub fn now_secs() -> i64 {
-  return Local::now().timestamp();
+  Local::now().timestamp()
 }

@@ -9,7 +9,7 @@ use tracing::info;
 use utoipa::ToSchema;
 
 use crate::cutil::message_broker::{MessageBroker, MessageBrokerImpl, MessageBrokerOptions, Qos};
-use crate::cutil::meta::{Meta, R};
+use crate::cutil::meta::R;
 use crate::cutil::{message_broker, message_center};
 use crate::meta;
 
@@ -82,7 +82,7 @@ impl MessageCenter for MessageCenterImpl {
 
   async fn listen(&self, handler: Arc<dyn Fn(message_center::Message) -> R<()> + Send + Sync>) -> R<()> {
     let wrapped_handler = Arc::new(move |message_b: message_broker::Message| -> R<()> {
-      if let Ok(mut message) = from_str::<message_center::Message>(&message_b.body) {
+      if let Ok(message) = from_str::<message_center::Message>(&message_b.body) {
         handler(message)?;
       }
       Ok(())

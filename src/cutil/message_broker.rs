@@ -116,7 +116,11 @@ impl MessageBrokerImpl {
     error!("Attempting to reconnect in {} seconds...", reconnect_delay);
     sleep(Duration::from_secs(reconnect_delay)).await;
 
-    let (new_client, new_eventloop) = Self::create_mqtt_client(&self.options).unwrap();
+    let (new_client, new_eventloop) = Self::create_mqtt_client(&self.options)
+      .map_err(|e| {
+        error!("Failed to create MQTT client during reconnect: {}", e);
+        e
+      })?;
     *self.client.lock().await = new_client;
     *self.eventloop.lock().await = new_eventloop;
     Ok(())
