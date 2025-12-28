@@ -57,7 +57,7 @@ impl Extract for HashMap<String, String> {
   fn extract_string(&self, key: &str) -> Option<String> {
     self.get(key).map(|s| s.to_string())
   }
-  
+
   fn extract_uuid(&self, key: &str) -> Option<Uuid> {
     self.get(key).map(|s| Uuid::parse_str(s).unwrap_or_default())
   }
@@ -93,9 +93,12 @@ impl Extract for HashMap<String, String> {
   fn extract_string_default(&self, key: &str, default: &str) -> String {
     self.get(key).unwrap_or(&default.to_string()).to_string()
   }
-  
+
   fn extract_uuid_default(&self, key: &str, default: Uuid) -> Uuid {
-    self.get(key).map(|s| Uuid::parse_str(s).unwrap_or_default()).unwrap_or(default)
+    self
+      .get(key)
+      .map(|s| Uuid::parse_str(s).unwrap_or_default())
+      .unwrap_or(default)
   }
 
   fn extract_vec(&self, key: &str) -> Vec<String> {

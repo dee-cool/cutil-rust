@@ -2,8 +2,8 @@ use crate::cutil::meta::R;
 use async_trait::async_trait;
 use idgenerator_thin::{IdGeneratorOptions, YitIdHelper};
 use once_cell::sync::Lazy;
-use rand::distr::Alphanumeric;
 use rand::Rng;
+use rand::distr::Alphanumeric;
 use ulid::Ulid;
 use uuid::Uuid;
 

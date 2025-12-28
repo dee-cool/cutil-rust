@@ -85,9 +85,9 @@ impl Pos {
     let paged = Paged {
       page_index: self.page_index,
       page_size,
-      page_count: num.number_of_pages,
+      total_pages: num.number_of_pages,
       items,
-      item_count: num.number_of_items,
+      total_items: num.number_of_items,
     };
     Ok(paged)
   }

@@ -25,7 +25,7 @@ pub fn configure(level: LevelFilter, bucket_path: String, app_name: String) {
 
   let file_appender = rolling::daily(format!("{}/log/", bucket_path), format!("{}.log", app_name));
   let (non_blocking_appender, guard) = non_blocking(file_appender);
-  
+
   WORKER_GUARD.set(guard).expect("日志系统只能初始化一次");
 
   let file_layer = fmt::layer()

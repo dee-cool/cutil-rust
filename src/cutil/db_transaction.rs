@@ -11,15 +11,15 @@ tokio::task_local! {
 }
 
 fn get_tx_from_context() -> Option<Arc<DatabaseTransaction>> {
-    TX_CONTEXT.try_with(|tx| tx.clone()).ok().flatten()
+  TX_CONTEXT.try_with(|tx| tx.clone()).ok().flatten()
 }
 
 async fn with_tx<F, Fut>(tx: Option<Arc<DatabaseTransaction>>, f: F) -> Fut::Output
 where
-    F: FnOnce() -> Fut,
-    Fut: std::future::Future,
+  F: FnOnce() -> Fut,
+  Fut: std::future::Future,
 {
-    TX_CONTEXT.scope(tx, f()).await
+  TX_CONTEXT.scope(tx, f()).await
 }
 
 #[injectable]
@@ -72,4 +72,3 @@ impl DbTransaction {
     }
   }
 }
-
