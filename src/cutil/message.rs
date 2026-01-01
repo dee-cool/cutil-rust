@@ -2,19 +2,27 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use async_trait::async_trait;
+use axum::http::{HeaderMap, HeaderValue};
+use chrono::Local;
 use rumqttc::Outgoing;
 use rumqttc::Transport;
 use rumqttc::v5::mqttbytes::QoS;
 use rumqttc::v5::mqttbytes::v5::Packet;
 use rumqttc::v5::{AsyncClient, Event, EventLoop, MqttOptions};
 use serde::{Deserialize, Serialize};
+use serde_json::{Value, from_str, to_string};
 use tokio::sync::{Mutex, watch};
 use tokio::time::sleep;
 use tracing::{error, info};
 use utoipa::ToSchema;
 
-use crate::cutil::generator::gen_string;
+use crate::cutil::utility::gen_string;
 use crate::cutil::meta::R;
+use crate::meta;
+
+// =============================================================================
+// MessageBroker
+// =============================================================================
 
 #[async_trait]
 pub trait MessageBroker: Send + Sync {
@@ -220,3 +228,120 @@ impl MessageBroker for MessageBrokerImpl {
     Ok(())
   }
 }
+
+// =============================================================================
+// MessageCenter
+// =============================================================================
+
+#[async_trait]
+pub trait MessageCenter: Send + Sync {
+  async fn subscribe(&self, topics: Vec<String>, qos: Qos) -> R<()>;
+
+  async fn unsubscribe(&self, topics: Vec<String>) -> R<()>;
+
+  async fn listen(&self, handler: Arc<dyn Fn(MessageCenterMessage) -> R<()> + Send + Sync>) -> R<()>;
+
+  async fn shutdown(&self) -> R<()>;
+
+  async fn publish(&self, qos: Qos, retain: bool, message: MessageCenterMessage) -> R<()>;
+
+  async fn publish_delay(&self, qos: Qos, retain: bool, message: MessageCenterMessage) -> R<()>;
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, ToSchema)]
+pub struct MessageCenterMessage {
+  pub id: String,
+  pub name: String,
+  pub created: i64,
+  pub arrival: i64,
+  pub body: Value,
+}
+
+impl Default for MessageCenterMessage {
+  fn default() -> Self {
+    Self {
+      id: "".to_string(),
+      name: "".to_string(),
+      created: Local::now().timestamp(),
+      arrival: Local::now().timestamp(),
+      body: Default::default(),
+    }
+  }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, ToSchema)]
+pub struct MessageCenterOptions {
+  pub publish_url: String,
+  pub publish_token: String,
+}
+
+pub struct MessageCenterImpl {
+  broker: Arc<dyn MessageBroker>,
+  options: MessageCenterOptions,
+}
+
+impl MessageCenterImpl {
+  pub fn new(options: MessageCenterOptions, message_broker_options: MessageBrokerOptions) -> R<Self> {
+    let broker = MessageBrokerImpl::new(message_broker_options)?;
+    Ok(Self {
+      broker: Arc::new(broker),
+      options,
+    })
+  }
+}
+
+#[async_trait]
+impl MessageCenter for MessageCenterImpl {
+  async fn subscribe(&self, topics: Vec<String>, qos: Qos) -> R<()> {
+    self.broker.subscribe(topics, qos).await
+  }
+
+  async fn unsubscribe(&self, topics: Vec<String>) -> R<()> {
+    self.broker.unsubscribe(topics).await
+  }
+
+  async fn listen(&self, handler: Arc<dyn Fn(MessageCenterMessage) -> R<()> + Send + Sync>) -> R<()> {
+    let wrapped_handler = Arc::new(move |message_b: Message| -> R<()> {
+      if let Ok(message) = from_str::<MessageCenterMessage>(&message_b.body) {
+        handler(message)?;
+      }
+      Ok(())
+    });
+
+    self.broker.listen(wrapped_handler).await
+  }
+
+  async fn shutdown(&self) -> R<()> {
+    self.broker.shutdown().await
+  }
+
+  async fn publish(&self, qos: Qos, retain: bool, message: MessageCenterMessage) -> R<()> {
+    let message_b = Message {
+      name: message.name.clone(),
+      qos,
+      retain,
+      body: to_string(&message)?,
+    };
+    self.broker.publish(message_b).await
+  }
+
+  async fn publish_delay(&self, qos: Qos, retain: bool, message: MessageCenterMessage) -> R<()> {
+    let mut headers = HeaderMap::new();
+    headers.insert(
+      "Authorization",
+      format!("token {}", self.options.publish_token.clone()).parse::<HeaderValue>()?,
+    );
+
+    let message_json = to_string(&message)?;
+    info!("publish message: {}", message_json);
+
+    let url = format!("{}?qos={:?}&retain={}", self.options.publish_url.clone(), qos, retain);
+    let client = reqwest::Client::new();
+    let res = client.post(url).headers(headers).json(&message).send().await?;
+    if !res.status().is_success() {
+      return meta!("publish_failed");
+    }
+    Ok(())
+  }
+}
+

@@ -57,8 +57,7 @@ cutil-rust = "1.0.25092002"
 ### 数据库操作示例
 
 ```rust
-use cutil_rust::cutil::db_client::DbClient;
-use cutil_rust::cutil::db_crud::*;
+use cutil_rust::cutil::db::{DbClient, *};
 use sea_orm::{ConnectOptions, Database};
 
 // 创建数据库客户端
@@ -77,7 +76,7 @@ let user = repo.get(user_id).await?;
 ### 消息队列示例
 
 ```rust
-use cutil_rust::cutil::message_broker::{MessageBrokerImpl, MessageBrokerOptions, Qos};
+use cutil_rust::cutil::message::{MessageBrokerImpl, MessageBrokerOptions, Qos};
 
 let options = MessageBrokerOptions {
     host: "localhost".to_string(),
@@ -106,26 +105,13 @@ log::configure(
 
 ## 主要模块
 
-- `db_client`: 数据库连接管理
-- `db_crud`: CRUD 操作宏和工具
-- `message_broker`: MQTT 消息代理
-- `message_center`: 消息中心（MQTT + HTTP）
+- `db`: 数据库连接管理、CRUD 操作宏和工具、事务管理
+- `message`: MQTT 消息代理和消息中心（MQTT + HTTP）
 - `log`: 日志配置
-- `meta`: 错误类型定义
-- `meta_config`: 错误类型转换
-- `time`: 时间工具
-- `string`: 字符串工具
-- `mask`: 数据脱敏
-- `env`: 环境变量工具
-- `extract`: 数据提取工具
-- `generator`: ID 生成器
-- `reqwest`: HTTP 客户端工具
-- `pos`: 分页参数
-- `paged`: 分页结果
-- `lazyload`: 懒加载器
-- `optionable`: Option 工具
-- `resultable`: Result 工具
-- `empty`: 空类型
+- `meta`: 错误类型定义和转换
+- `paged`: 分页参数和分页结果
+- `traits`: 数据提取、Option、Result 等 trait 定义
+- `utility`: 工具函数集合（时间、字符串、掩码、环境变量、ID生成器、HTTP客户端、懒加载器等）
 
 ## 设计模式
 

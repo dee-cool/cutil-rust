@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 use uuid::Uuid;
 
+use crate::cutil::meta::R;
+use crate::meta;
+
 pub trait Extract {
   fn extract_i64(&self, key: &str) -> Option<i64>;
   fn extract_u64(&self, key: &str) -> Option<u64>;
@@ -108,3 +111,27 @@ impl Extract for HashMap<String, String> {
       .unwrap_or(vec![])
   }
 }
+
+pub trait Optionable {
+  fn to_option(self) -> Option<String>;
+}
+
+impl Optionable for String {
+  fn to_option(self) -> Option<String> {
+    if self.is_empty() { None } else { Some(self) }
+  }
+}
+
+pub trait Resultable<T> {
+  fn to_result(self, name: &str, message: &str) -> R<T>;
+}
+
+impl<T> Resultable<T> for Option<T> {
+  fn to_result(self, name: &str, message: &str) -> R<T> {
+    match self {
+      Some(value) => Ok(value),
+      None => meta!(name, message),
+    }
+  }
+}
+
